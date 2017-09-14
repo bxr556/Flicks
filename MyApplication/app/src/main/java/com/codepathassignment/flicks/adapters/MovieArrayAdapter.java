@@ -1,6 +1,7 @@
 package com.codepathassignment.flicks.adapters;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -48,8 +49,14 @@ public class MovieArrayAdapter extends ArrayAdapter<Movie> {
         tvTitle.setText(movie.getOriginalTitle());
         tvOverview.setText(movie.getOverview());
 
-        String movieURL = movie.getPosterPath();
-        Picasso.with(getContext()).load(movie.getPosterPath()).into(ivImage);
+        int orientation = getContext().getResources().getConfiguration().orientation;
+        if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+
+            Picasso.with(getContext()).load(movie.getPosterPath()).into(ivImage);
+        }else if (orientation == Configuration.ORIENTATION_LANDSCAPE){
+
+            Picasso.with(getContext()).load(movie.getBackdropPath()).into(ivImage);
+        }
         return convertView;
     }
 }
