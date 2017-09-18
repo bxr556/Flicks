@@ -23,7 +23,17 @@ import java.util.List;
 
 public class MovieArrayAdapter extends ArrayAdapter<Movie> {
 
-    private static class ViewHolder{
+
+    public enum MovieType{
+        POPULAR,
+        NOT_POPULAR
+    }
+    private static class ViewHolderPopular{
+        ImageView ivImage;
+
+    }
+
+    private static class ViewHolderNotPopular{
         TextView tvTitle;
         TextView tvOverview;
         ImageView ivImage;
@@ -31,7 +41,25 @@ public class MovieArrayAdapter extends ArrayAdapter<Movie> {
     }
 
     public MovieArrayAdapter(Context context, List<Movie> movies){
-        super(context, R.layout.item_movie,movies);
+        super(context, R.layout.item_movie_not_popular,movies);
+    }
+
+
+    @Override
+    public int getViewTypeCount() {
+        return MovieType.values().length;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+
+        Movie movie = getItem(position);
+        if (movie.getVote_average()>7.0f){
+            return MovieType.POPULAR.ordinal();
+        }else{
+            return MovieType.NOT_POPULAR.ordinal();
+        }
+
     }
 
     @NonNull
@@ -40,38 +68,60 @@ public class MovieArrayAdapter extends ArrayAdapter<Movie> {
         //get the data item for position;
 
         Movie movie = getItem(position);
-
-        ViewHolder viewHolder;
-
-        if (convertView == null){
-
-            viewHolder = new ViewHolder();
-            LayoutInflater inflater = LayoutInflater.from(getContext());
-            convertView = inflater.inflate(R.layout.item_movie,parent,false);
-            viewHolder.tvTitle = (TextView)convertView.findViewById(R.id.tvTitle);
-            viewHolder.tvOverview=(TextView)convertView.findViewById(R.id.tvOverview);
-            viewHolder.ivImage =(ImageView)convertView.findViewById(R.id.ivMovieImage);
-            convertView.setTag(viewHolder);
-        }else{
-            viewHolder = (ViewHolder)convertView.getTag();
-        }
-
-
-
-        viewHolder.ivImage.setImageResource(0);
-
-
-        viewHolder.tvTitle.setText(movie.getOriginalTitle());
-        viewHolder.tvOverview.setText(movie.getOverview());
-
         int orientation = getContext().getResources().getConfiguration().orientation;
-        if (orientation == Configuration.ORIENTATION_PORTRAIT) {
 
-            Picasso.with(getContext()).load(movie.getPosterPath()).fit().placeholder(R.drawable.loading).into(viewHolder.ivImage);
-        }else if (orientation == Configuration.ORIENTATION_LANDSCAPE){
+        switch (getItemViewType(position)){
+            case 0:
+                ViewHolderPopular holderPopular;
+                if(convertView == null){
+                    LayoutInflater inflater = LayoutInflater.from(getContext());
+                    convertView = inflater.inflate(R.layout.item_movie_popular,parent,false);
+                    holderPopular = new ViewHolderPopular();
+                    holderPopular.ivImage = (ImageView)convertView.findViewById(R.id.ivMovieImage);
+                    convertView.setTag(holderPopular);
+                }else{
+                    holderPopular = (ViewHolderPopular)convertView.getTag();
+                }
 
-            Picasso.with(getContext()).load(movie.getBackdropPath()).fit().placeholder(R.drawable.loading_192).into(viewHolder.ivImage);
+                if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+
+                    Picasso.with(getContext()).load(movie.getPosterPath()).fit().placeholder(R.drawable.loading).into(holderPopular.ivImage);
+                }else if (orientation == Configuration.ORIENTATION_LANDSCAPE){
+
+                    Picasso.with(getContext()).load(movie.getBackdropPath()).fit().placeholder(R.drawable.loading_192).into(holderPopular.ivImage);
+                }
+                break;
+
+            case 1:
+                ViewHolderNotPopular holderNotPopular;
+                if(convertView == null){
+                    LayoutInflater inflater = LayoutInflater.from(getContext());
+                    convertView = inflater.inflate(R.layout.item_movie_not_popular,parent,false);
+                    holderNotPopular = new ViewHolderNotPopular();
+                    holderNotPopular.ivImage = (ImageView)convertView.findViewById(R.id.ivMovieImage);
+                    holderNotPopular.tvTitle = (TextView)convertView.findViewById(R.id.tvTitle) ;
+                    holderNotPopular.tvOverview=(TextView)convertView.findViewById(R.id.tvOverview);
+                    convertView.setTag(holderNotPopular);
+                }else{
+                    holderNotPopular = (ViewHolderNotPopular)convertView.getTag();
+                }
+
+                if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+
+                    Picasso.with(getContext()).load(movie.getPosterPath()).fit().placeholder(R.drawable.loading).into(holderNotPopular.ivImage);
+                }else if (orientation == Configuration.ORIENTATION_LANDSCAPE){
+
+                    Picasso.with(getContext()).load(movie.getBackdropPath()).fit().placeholder(R.drawable.loading_192).into(holderNotPopular.ivImage);
+                }
+                holderNotPopular.tvTitle.setText(movie.getOriginalTitle());
+                holderNotPopular.tvOverview.setText(movie.getOverview());
+                break;
+
+            default:
+                //Throw exception
+
         }
+
         return convertView;
     }
 }
