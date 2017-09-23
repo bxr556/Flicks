@@ -1,6 +1,8 @@
 package com.codepathassignment.nytimessearch;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -24,9 +26,15 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import cz.msebera.android.httpclient.Header;
+
+import static com.codepathassignment.nytimessearch.FilterActivity.prefs;
 
 public class SearchActivity extends AppCompatActivity {
 
@@ -87,6 +95,11 @@ public class SearchActivity extends AppCompatActivity {
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
+        }else if (id==R.id.action_filter){
+            Toast.makeText(this,"filtering",Toast.LENGTH_SHORT).show();
+            Intent filterIntent = new Intent(this,FilterActivity.class);
+            startActivity(filterIntent);
+            return true;
         }
 
         return super.onOptionsItemSelected(item);
@@ -102,6 +115,21 @@ public class SearchActivity extends AppCompatActivity {
         params.put("page",0);
         params.put("q",query);
 
+        SharedPreferences prefs=this.getSharedPreferences("store", Context.MODE_PRIVATE);
+        params.put("sort",prefs.getString("sortOrder","asdf"));
+
+
+
+        DateFormat df = new SimpleDateFormat("yyyyMMdd");
+        String beginDate = prefs.getString("beginDate","1969-01-01").replace("-","");
+        params.put("begin_date",beginDate);
+
+        String newDesk =getNewsDesk();
+        if (newDesk!= null) {
+            params.put("fq", newDesk);
+        }
+
+
         client.get(url,params,new JsonHttpResponseHandler(){
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
@@ -111,7 +139,7 @@ public class SearchActivity extends AppCompatActivity {
 
                 try{
                     articleJsonResults = response.getJSONObject("response").getJSONArray("docs");
-
+                    articles.clear();
                     articles.addAll(Article.fromJSONArray(articleJsonResults));
                     adapter.notifyDataSetChanged();
                     Log.d("DEBUG",articles.toString());
@@ -128,5 +156,39 @@ public class SearchActivity extends AppCompatActivity {
 
 
         );
+    }
+
+
+    public String getNewsDesk() {
+        String news_desk="news_desk:(";
+        SharedPreferences prefs=this.getSharedPreferences("store", Context.MODE_PRIVATE);
+        Boolean bArts = prefs.getBoolean("bArts",false);
+        Boolean bFashion = prefs.getBoolean("bFashion",false);
+        Boolean bSports = prefs.getBoolean("bSports",false);
+        if (bArts||bFashion||bSports) {
+            if (bArts) {
+                news_desk += "\"Arts\" ";
+            }
+            if (bFashion) {
+
+                try {
+                    news_desk += "\"" + URLEncoder.encode("Fashion & Style", "UTF-8")+" \"";
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (bSports) {
+                news_desk += "\"Sports\" ";
+            }
+
+            news_desk+=")";
+
+            Log.d("DEBUG",news_desk);
+            return news_desk;
+        }else{
+            //This indicates that no filter is applied.
+            return null;
+        }
+
     }
 }

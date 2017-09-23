@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.codepathassignment.nytimessearch.FilterActivity"
+    tools:showIn="@layout/activity_filter">
+
+    <TextView
+        android:id="@+id/tvBeginDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/begin_date"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginStart="16dp" />
+
+    <TextView
+        android:id="@+id/tvSortOrder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/sort_order"
+        android:layout_marginTop="52dp"
+        app:layout_constraintTop_toBottomOf="@+id/tvBeginDate"
+        android:layout_marginLeft="16dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginStart="16dp" />
+
+    <TextView
+        android:id="@+id/tvNewsDeskValues"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/news_desk_values"
+        android:layout_marginTop="59dp"
+        app:layout_constraintTop_toBottomOf="@+id/tvSortOrder"
+        android:layout_marginLeft="16dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginStart="16dp" />
+
+    <EditText
+        android:id="@+id/etBeginDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="8dp"
+        android:ems="10"
+        android:inputType="date"
+        tools:text="01/03/2016"
+        android:onClick="showDataPickerDialog"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toRightOf="@+id/tvBeginDate"
+        android:layout_marginLeft="8dp"
+        app:layout_constraintTop_toBottomOf="@+id/tvBeginDate"
+        app:layout_constraintBottom_toTopOf="@+id/tvBeginDate"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintHorizontal_bias="0.885"
+        app:layout_constraintVertical_bias="0.516" />
+
+    <Spinner
+        android:id="@+id/spSortOrder"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:entries="@array/sort_order_array"
+        android:layout_marginLeft="0dp"
+        android:layout_marginTop="39dp"
+        app:layout_constraintTop_toBottomOf="@+id/etBeginDate"
+        app:layout_constraintLeft_toLeftOf="@+id/etBeginDate" />
+
+    <CheckBox
+        android:id="@+id/cbArts"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Arts"
+        android:layout_marginLeft="0dp"
+        android:layout_marginTop="0dp"
+        app:layout_constraintTop_toBottomOf="@+id/tvNewsDeskValues"
+        android:layout_marginBottom="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/tvNewsDeskValues"
+        app:layout_constraintVertical_bias="0.326"
+        app:layout_constraintLeft_toLeftOf="@+id/spSortOrder" />
+
+    <CheckBox
+        android:id="@+id/cbFashion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Fashion &amp; Style"
+        android:layout_marginTop="9dp"
+        app:layout_constraintTop_toBottomOf="@+id/cbArts"
+        android:layout_marginLeft="0dp"
+        app:layout_constraintLeft_toLeftOf="@+id/cbArts" />
+
+    <CheckBox
+        android:id="@+id/cbSports"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Sports"
+        android:layout_marginTop="13dp"
+        app:layout_constraintTop_toBottomOf="@+id/cbFashion"
+        android:layout_marginLeft="-8dp"
+        app:layout_constraintLeft_toLeftOf="@+id/cbFashion" />
+
+    <Button
+        android:id="@+id/btnSave"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/save"
+        android:onClick="save"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="93dp"
+        app:layout_constraintTop_toBottomOf="@+id/cbSports"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintVertical_bias="0.0" />
+</android.support.constraint.ConstraintLayout>
