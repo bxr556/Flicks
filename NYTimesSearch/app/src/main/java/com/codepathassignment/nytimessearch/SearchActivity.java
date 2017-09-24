@@ -124,26 +124,34 @@ public class SearchActivity extends AppCompatActivity {
         client.get(url,params,new JsonHttpResponseHandler(){
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                        EndlessScrollListener.httpFailure=false;
                         //super.onSuccess(statusCode, headers, response);
                         Log.d("DEBUG", response.toString());
                         JSONArray articleJsonResults = null;
 
                         try{
                             articleJsonResults = response.getJSONObject("response").getJSONArray("docs");
-                            //articles.clear();
                             articles.addAll(Article.fromJSONArray(articleJsonResults));
-
                             adapter.notifyDataSetChanged();
-                            Log.d("DEBUG",articles.toString());
+
+                            int numberArticle = articleJsonResults.length();
+                            Log.d("DEBUG", "numberArtial found:"+ numberArticle);
+                            if (numberArticle>0) {
+                                EndlessScrollListener.loading = false;
+                            }
+                            //Log.d("DEBUG",articles.toString());
                         }catch (JSONException e){
                             e.printStackTrace();
                         }
                     }
 
-
                     @Override
                     public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                        super.onFailure(statusCode, headers, throwable, errorResponse);
+                        throwable.printStackTrace();
+                        Log.d("DEBUG",errorResponse.toString());
+                        EndlessScrollListener.loading = false;
+                        EndlessScrollListener.httpFailure=true;
+                        //super.onFailure(statusCode, headers, throwable, errorResponse);
                     }
                 }
 
@@ -186,6 +194,7 @@ public class SearchActivity extends AppCompatActivity {
         articles.clear();
         adapter.notifyDataSetChanged();
         listener.resetState();
+        EndlessScrollListener.loading=true;
         loadNextDataFromApi(0);
     }
 
