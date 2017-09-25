@@ -3,7 +3,10 @@ package com.codepathassignment.nytimessearch;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Process;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -26,6 +29,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.DateFormat;
@@ -45,10 +49,32 @@ public class SearchActivity extends AppCompatActivity {
     ArrayList<Article> articles;
     ArticalArrayAdapter adapter;
     EndlessScrollListener listener;
+
+    private Boolean isNetworkAvailable(){
+        ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo!= null && activeNetworkInfo.isConnectedOrConnecting();
+    }
+
+    public boolean isOnline(){
+        Runtime runtime = Runtime.getRuntime();
+        try{
+            java.lang.Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
+            int exitValue = ipProcess.waitFor();
+            return (exitValue ==0);
+        }catch (IOException e ){e.printStackTrace();}
+        catch (InterruptedException e){e.printStackTrace();};
+            return false;
+    }
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if ((!isNetworkAvailable())||!(isOnline())){
+            Toast.makeText(this,"Network is not available, please retry later", Toast.LENGTH_LONG).show();
+            finish();
+        }
+
         setContentView(R.layout.activity_search);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
